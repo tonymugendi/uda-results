@@ -24,7 +24,7 @@ export default function Home() {
 
 
   const handleChange = async () => {
-    const response = await fetch(`http://34.255.11.66/voting/results?search=${searchValue}`);
+    const response = await fetch(`http://54.229.36.243/voting/results?search=${searchValue}`);
     const pdfResults = await response.json();
 
     setResults(pdfResults)
