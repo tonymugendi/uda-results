@@ -2,7 +2,6 @@ import { Flex, Button, Box, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 
 import React from 'react'
-import styles from '@/styles/Home.module.css'
 import farmer from '../public/farmer.jpeg'
 
 
@@ -48,12 +47,11 @@ const Hero = ({ handleClick }: any) => {
           <Image src='/uda-logo.png' width={77} height={77} alt='logo' />
         </Box>
 
-        <Box  mt={100}>
+        <Box  mt='12vw'>
           <Text
             color='white'
-            fontSize={{base: '42px', lg: '82px'}}
+            fontSize={{base: '10.2vw', md: '4.2vw'}}
             fontWeight={700}
-            letterSpacing='-3.28px'
             lineHeight='normal'
           >
             UDA Grassroots Elections <span style={{ color: '#F8C80F' }} >2023</span> Results
@@ -65,7 +63,8 @@ const Hero = ({ handleClick }: any) => {
             color='black'
             borderRadius='100px'
             bgColor='#F8C80F'
-            p='28px 41px'
+            fontSize={{lg: '1.2vw'}}
+            p={{md: '1.2vw 1.2vw'}}
             onClick={handleClick}
           >
             View all Results
