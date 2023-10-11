@@ -2,6 +2,7 @@ export const filterStyles = {
   container: provided => ({
     ...provided,
     width: '100%',
+    fontSize: 16
   }),
   control: (provided, state) => {
     return {
@@ -10,7 +11,8 @@ export const filterStyles = {
       height: 34,
       minHeight: 34,
       borderRadius: "12px",
-      boxShadow: "none"
+      boxShadow: "none",
+      borderColor: '#CBD9CE'
     };
   },
   singleValue: (provided, state) => ({
@@ -26,7 +28,9 @@ export const filterStyles = {
     ...provided,
     height: 34,
     color: state.hasValue ? "black" : "inherit",
-    padding: "0px 8px"
+    padding: "0px 8px",
+    fontSize: "15px",
+
   }),
   input: (provided, state) => ({
     ...provided,
@@ -38,7 +42,7 @@ export const filterStyles = {
   }),
   dropdownIndicator: provided => ({
     ...provided,
-    display: "none"
+    // display: "none"
   }),
   clearIndicator: provided => ({
     ...provided,
@@ -49,5 +53,26 @@ export const filterStyles = {
     height: 34,
     display: "none",
     minHeight: 34
+  }),
+  menu: provided => ({
+    ...provided,
+    paddingLeft: 6,
+    paddingRight: 6,
+    borderRadius: "12px"
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    borderRadius: "12px",
+    backgroundColor: state.isSelected ? "#CBD9CE" : 'white',
+    fontWeight: state.isSelected ? "bold" : state.fontWeight,
+    color: state.isSelected ? "black" : state.color,
+    fontSize: "15px",
+    paddingTop: '5px',
+    paddingBottom: '5px',
+
+    "&:hover": {    
+      cursor: 'pointer',                                       
+      backgroundColor: '#EDEDED',                                      
+    },
   })
 };

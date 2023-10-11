@@ -17,6 +17,7 @@ const defaultFilters = {
   ward_name: null
 };
 
+
 export default function Home() {
   const ref = useRef<null | HTMLDivElement>(null);
   const [queryParams, setQueryParams] = useState('')
