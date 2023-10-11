@@ -2,33 +2,85 @@ import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Box, Flex, Input, InputGroup, InputLeftElement, Link, Spacer, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Flex, Input, InputGroup, InputLeftElement, Link, Spacer, Text, VStack } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons';
+import Select from 'react-select'
 import Hero from '@/components/hero';
+import { useConstituency, useCounty, useResults, useWard } from '@/lib/hooks';
+import { filterStyles } from '@/components/filterStyles';
 
 const inter = Inter({ subsets: ['latin'] })
 
+const defaultFilters = {
+  county_name: null,
+  constituency_name: null,
+  ward_name: null
+};
+
 export default function Home() {
   const ref = useRef<null | HTMLDivElement>(null);
-  const [results, setResults] = useState([]);
-  const [searchValue, setSearchValue] = useState('')
+  const [queryParams, setQueryParams] = useState('')
+  const { data } = useResults(queryParams)
+  const [filters, setFilters] = useState(defaultFilters);
+  const { county, countyLoading } = useCounty()
+  const { constituency, constituencyLoading } = useConstituency(filters.county_name && `?county_name=${filters.county_name.value}`)
+  const { ward, wardLoading } = useWard(filters.constituency_name && `?constituency_name=${filters.constituency_name.value}`)
+
+
+  const countyOptions = county?.map(
+    ({ county_name }) => ({
+      value: county_name,
+      label: county_name
+    })
+  );
+
+  const constituencyOptions = constituency?.map(
+    ({ constituency_name }) => ({
+      value: constituency_name,
+      label: constituency_name
+    })
+  );
+  const wardOptions = ward?.map(
+    ({ ward_name }) => ({
+      value: ward_name,
+      label: ward_name
+    })
+  );
+
+
 
   const handleClick = () => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    handleChange()
-  }, [searchValue])
+
+  })
+
+  const onChange = ({ key, value }) => {
+    if (queryParams) {
+      setQueryParams(`${queryParams}&${key}=${value?.value}`)
+    } else {
+      setQueryParams(`?${key}=${value?.value}`)
+    }
+
+    setFilters({ ...filters, [key]: value });
+  };
+
+  const onSearch = (e: any) => {
+    setQueryParams(`?search=${e}`)
 
 
+    if (queryParams) {
+      setQueryParams(`${queryParams}&search=${e}`)
+    } else {
+      setQueryParams(`?search=${e}`)
+    }
+  };
 
-  const handleChange = async () => {
-    const response = await fetch(`https://voting-backend.uda.ke/voting/results?search=${searchValue}`);
-    const pdfResults = await response.json();
-
-    setResults(pdfResults)
-
+  const clearFilters = () => {
+    setFilters(defaultFilters);
+    setQueryParams('')
   }
 
   return (
@@ -45,26 +97,63 @@ export default function Home() {
         <Box
           height="100vh"
           ref={ref}
-          // justifyContent='center'
-          // alignItems='center'
-          p={{base: '40px 5px 0px 5px', lg: '40px 140px 0px 140px'}}
+          p={{ base: '40px 5px 0px 5px', lg: '40px 140px 0px 140px' }}
         >
-          <Flex >
-            <InputGroup borderRadius='12px' w={400}>
+          <Flex gap={2} direction={{base: 'column', md: 'row' }}>
+            <InputGroup >
               <InputLeftElement pointerEvents='none'>
                 <SearchIcon color='gray.300' />
               </InputLeftElement>
               <Input
+                borderRadius='12px'
+                h='35px'
                 bgColor='#F5F7F8'
                 placeholder='Search by Polling Center'
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
+                onChange={(e) => onSearch(e.target.value)}
               />
             </InputGroup>
+              <Select
+                options={countyOptions}
+                styles={filterStyles}
+                isLoading={countyLoading}
+                instanceId="long-value-select"
+                value={filters.county_name}
+                placeholder="County"
+                onChange={(filter) => {
+                  onChange({ key: "county_name", value: filter });
+                }}
+              />
+            <Select
+              options={constituencyOptions}
+              styles={filterStyles}
+              isLoading={constituencyLoading}
+              instanceId="long-value-select"
+              value={filters.constituency_name}
+              placeholder="Constituency"
+              isDisabled={!filters.county_name}
+              onChange={(filter) => {
+                onChange({ key: "constituency_name", value: filter });
+              }}
+            />
+
+            <Select
+              options={wardOptions}
+              styles={filterStyles}
+              isLoading={wardLoading}
+              instanceId="long-value-select"
+              value={filters.ward_name}
+              placeholder="Ward"
+              isDisabled={!filters.constituency_name}
+              onChange={(filter) => {
+                onChange({ key: "ward_name", value: filter });
+              }}
+            />
+            <Button onClick={clearFilters} variant='ghost' color='#1A932E'>Reset</Button>
+
           </Flex>
           <Box>
 
-            {results.map((result: any, index) => (
+            {data?.map((result: any, index) => (
               <Flex
                 alignItems='center'
                 my={4}
